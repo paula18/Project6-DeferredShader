@@ -61,6 +61,10 @@ CIS565WEBGLCORE.createCamera = function(t){
         update();
     };
 
+    getCameraPosition = function (){
+        return position; 
+    };    
+
     dolly = function(s){
         
         var p =  vec3.create();
@@ -180,6 +184,7 @@ CIS565WEBGLCORE.createCamera = function(t){
     newObj.moveRight = moveRight; 
     newObj.moveUp = moveUp;
     newObj.moveDown = moveDown;
+    newObj.getCameraPosition = getCameraPosition; 
 
     return newObj;
 };

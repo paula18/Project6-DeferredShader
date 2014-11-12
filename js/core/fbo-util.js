@@ -18,7 +18,7 @@ CIS565WEBGLCORE.createFBO = function(){
      var depthTex = null;
      var fbo = [];
 
-     var multipleTargets = true;
+     var multipleTargets = false;
 
      function init( gl, width, height ){
      	gl.getExtension( "OES_texture_float" );
@@ -46,7 +46,7 @@ CIS565WEBGLCORE.createFBO = function(){
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, width, height, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null);
 
         // Create textures for FBO attachment 
-        for( var i = 0; i < 5; ++i ){
+        for( var i = 0; i < 6; ++i ){
         	textures[i] = gl.createTexture()
         	gl.bindTexture( gl.TEXTURE_2D,  textures[i] );
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -117,6 +117,14 @@ CIS565WEBGLCORE.createFBO = function(){
           FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
           if (FBOstatus !== gl.FRAMEBUFFER_COMPLETE) {
             console.log("PBuffer FBO incomplete! Init failed!");
+            return false;
+          }
+          
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+          FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+          if (FBOstatus !== gl.FRAMEBUFFER_COMPLETE) {
+            console.log("PBufferGLOW FBO incomplete! Init failed!");
             return false;
           }
           

@@ -1,57 +1,30 @@
 ------------------------------------------------------------------------------
 CIS565: Project 6 -- Deferred Shader
 -------------------------------------------------------------------------------
-Fall 2014
--------------------------------------------------------------------------------
-Due Wed, 11/12/2014 at Noon
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
-NOTE:
--------------------------------------------------------------------------------
-This project requires any graphics card with support for a modern OpenGL 
-pipeline. Any AMD, NVIDIA, or Intel card from the past few years should work 
-fine, and every machine in the SIG Lab and Moore 100 is capable of running 
-this project.
-
-This project also requires a WebGL capable browser. The project is known to 
-have issues with Chrome on windows, but Firefox seems to run it fine.
 
 -------------------------------------------------------------------------------
 INTRODUCTION:
 -------------------------------------------------------------------------------
 
-In this project, you will get introduced to the basics of deferred shading. You will write GLSL and OpenGL code to perform various tasks in a deferred lighting pipeline such as creating and writing to a G-Buffer.
+The purpose of this project was to get introduced to the deferred shading pipeline. 
 
--------------------------------------------------------------------------------
-CONTENTS:
--------------------------------------------------------------------------------
-The Project5 root directory contains the following subdirectories:
-	
-* js/ contains the javascript files, including external libraries, necessary.
-* assets/ contains the textures that will be used in the second half of the
-  assignment.
-* resources/ contains the screenshots found in this readme file.
+The main idea behind deferred shading is that, if a pixel does not get to the screen, there is not need to shade it. For this reason, deferred shading post-pones the light 
+calculations and computes them in the image space. Basically, lighting is decoupled from the scene geomtry.  The deferred shading pipeline is broken into two steps. First, we write the properties of all visible objects into the G-Buffer. Then, for each light in the scene, 
+we computer its contribution using the G-Buffer properties and we accumulate it in the framebuffer. The basic meachanics of this pipeline is shown in the 
+following image. 
 
- This Readme file edited as described above in the README section.
+The advantages of this pipeline is that we have fewer shaders: one per material, and one per light type. Also, we only need to transform and rasterized each object once, 
+unlike in the forward shading pipeline. Here, we only render objects that are not occluded. 
+
+As I mentioned before, in the geometry pass, we write all the properties of the objects (normals, depth, positions...) into the G-Buffer. These are written into textures that
+are later read in the second pass. 
+
+The light accumulation pass 
 
 -------------------------------------------------------------------------------
 OVERVIEW:
 -------------------------------------------------------------------------------
-The deferred shader you will write will have the following stages:
 
-Stage 1 renders the scene geometry to the G-Buffer
-* pass.vert
-* pass.frag
-
-Stage 2 renders the lighting passes and accumulates to the P-Buffer
-* quad.vert
-* diffuse.frag
-* diagnostic.frag
-
-Stage 3 renders the post processing
-* post.vert
-* post.frag
 
 The keyboard controls are as follows:
 WASDRF - Movement (along w the arrow keys)

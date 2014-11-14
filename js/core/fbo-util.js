@@ -111,6 +111,7 @@ CIS565WEBGLCORE.createFBO = function(){
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
           fbo[FBO_PBUFFER] = gl.createFramebuffer();
+          //gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTex, 0);
           gl.bindFramebuffer(gl.FRAMEBUFFER, fbo[FBO_PBUFFER]);
           gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[4], 0);
 
@@ -122,17 +123,10 @@ CIS565WEBGLCORE.createFBO = function(){
           
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-          FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-          if (FBOstatus !== gl.FRAMEBUFFER_COMPLETE) {
-            console.log("PBufferGLOW FBO incomplete! Init failed!");
-            return false;
-          }
-          
-          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-          // Set up GBuffer Normal
+                   // Set up GBuffer Normal
           fbo[FBO_GBUFFER_NORMAL] = gl.createFramebuffer();
           gl.bindFramebuffer(gl.FRAMEBUFFER, fbo[FBO_GBUFFER_NORMAL]);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTex, 0);
           gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[1], 0);
 
           FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
@@ -146,6 +140,7 @@ CIS565WEBGLCORE.createFBO = function(){
           // Set up GBuffer Color
           fbo[FBO_GBUFFER_COLOR] = gl.createFramebuffer();
           gl.bindFramebuffer(gl.FRAMEBUFFER, fbo[FBO_GBUFFER_COLOR]);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depthTex, 0);
           gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textures[2], 0);
 
           FBOstatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);

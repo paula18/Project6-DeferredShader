@@ -13,9 +13,33 @@ OVERVIEW:
 -------------------------------------------------------------------------------
 
 The purpose of this project was to get introduced to the deferred shading pipeline. 
+
 The main idea behind deferred shading is that if a pixel does not get to the screen, there is no need to shade it. For this reason, deferred shading post-pones the light calculations and computes them in the image space. Basically, lighting is decoupled from the scene geometry. The deferred shading pipeline is broken into two steps. First, we write the properties of all visible objects into the G-Buffer. Then, for each light in the scene, we compute its contribution using the G-Buffer properties and we accumulate it in the frame buffer. The good thing about storing the color, position, normal and depth, is that creating lighting effects in the second pass is relatively easy, since we have all these values at hand. The basic mechanics of this pipeline is shown in the following image. 
+
 The advantages of this pipeline is that we have fewer shaders: one per material-light combination. Also, we only need to transform and rasterized each object once, unlike in the forward shading pipeline. Here, we only render objects that are not occluded. 
+
 As I mentioned before, the geometry pass processes all of the objects in the scene. We write all the properties of the objects (normals, depth, positions...) into the G-Buffer. These are written into 2D textures, having a texture per vertex attribute. All the pixel that fail the depth test are dropped and we are left with the pixel that will be shown on the screen. 
+
+**Geometry Buffers**
+
+Position
+
+![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/position.PNG)
+
+Normal
+
+![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/normal.PNG)
+
+Color
+
+![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/color.PNG)
+
+Depth
+
+![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/depth.PNG)
+
+
+
 The light accumulation pass reads the properties of the G-Buffer pixel by pixel, and does the lighting calculations the same way we did in forward shading. To create the final image, we render a screen space quad. 
 
 ![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/deferredShading.PNG)
@@ -64,6 +88,7 @@ This first image shows the first way I implemented this feature, which was wrong
 ![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/ao.PNG)
 
 **Depth of field**
+
 The effect of depth of field is created using a Gaussian Blur. First, I calculate the distance between the fragment’s depth and a user defined focal length. I then used the length of this distance as the sigma value of the Gaussian equation.
 
 ![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/gaussian.PNG)
@@ -79,13 +104,15 @@ I don’t think my bloom effect is very accurate, but it works. The way I created 
 **User Interface**
 
 I got rid of the keyboard interaction and added a GUI Box for easier user interface. The user can play with some values to modify the effects I have implemented.  However there is a bug that I need to fix. If you change any of the color values that the user is able to modify and then click on the screen, this color turns very dark. So, do any camera movement before changing the color. 
+
 -------------------------------------------------------------------------------
 PERFORMANCE EVALUATION
 -------------------------------------------------------------------------------
 
 For my performance analysis I calculated the FPS it takes for each feature to render. I got the results I was expecting. For the basic lighting features (diffuse and specular) and for the toon coloring and ambient occlusion there is no noticeable change in performance. These computations are simple and inexpensive. However, when we turn the bloom controller or the depth of field controller on, the performance decreases drastically. I believe this is due to the Gaussian Blur I used to sample points. During this computation, we sample over values in the x and y direction and then compute a power function, which is already expensive. The following graph shows the performance behavior.   
--------------------------------------------------------------------------------
 
+
+-------------------------------------------------------------------------------
 RUNNING THE CODE:
 -------------------------------------------------------------------------------
 

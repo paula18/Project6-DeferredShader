@@ -616,7 +616,7 @@ var initCamera = function () {
   interactor = CIS565WEBGLCORE.CameraInteractor(camera, canvas);
 
   // Add key-input controls
-  /*window.onkeydown = function (e) {
+  window.onkeydown = function (e) {
     interactor.onKeyDown(e);
     switch(e.keyCode) {
       case 48: //0
@@ -664,7 +664,7 @@ var initCamera = function () {
         texToDisplay = 10;
         break;
     }
-  }*/
+  }
 };
 
 var initObjs = function () {

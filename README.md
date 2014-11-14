@@ -12,7 +12,11 @@ Sponza Toon Effect:
 -------------------------------------------------------------------------------
 VIDEO AND DEMO:
 -------------------------------------------------------------------------------
+
 Video: https://vimeo.com/111820765
+
+Demo: http://paula18.github.io/Project6-DeferredShader/
+
 -------------------------------------------------------------------------------
 OVERVIEW:
 -------------------------------------------------------------------------------
@@ -20,6 +24,8 @@ OVERVIEW:
 The purpose of this project was to get introduced to the deferred shading pipeline. 
 
 The main idea behind deferred shading is that if a pixel does not get to the screen, there is no need to shade it. For this reason, deferred shading post-pones the light calculations and computes them in the image space. Basically, lighting is decoupled from the scene geometry. The deferred shading pipeline is broken into two steps. First, we write the properties of all visible objects into the G-Buffer. Then, for each light in the scene, we compute its contribution using the G-Buffer properties and we accumulate it in the frame buffer. The good thing about storing the color, position, normal and depth, is that creating lighting effects in the second pass is relatively easy, since we have all these values at hand. The basic mechanics of this pipeline is shown in the following image. 
+
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/deferredShading.PNG)
 
 The advantages of this pipeline is that we have fewer shaders: one per material-light combination. Also, we only need to transform and rasterized each object once, unlike in the forward shading pipeline. Here, we only render objects that are not occluded. 
 
@@ -33,7 +39,7 @@ Position
 
 Normal
 
-![alt tag](https://github.com/paula18/Project6-DeferredShaderL/blob/master/resources/normal.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/normal.PNG)
 
 Color
 
@@ -47,7 +53,6 @@ Depth
 
 The light accumulation pass reads the properties of the G-Buffer pixel by pixel, and does the lighting calculations the same way we did in forward shading. To create the final image, we render a screen space quad. 
 
-![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/deferredShading.PNG)
 
 -------------------------------------------------------------------------------
 FEATURES:
@@ -77,8 +82,6 @@ This first image shows the first way I implemented this feature, which was wrong
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/toonColoring.PNG)
 
-This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
-
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bunnyToon.PNG)
 
 
@@ -88,8 +91,6 @@ Ambient occlusion offers a way of seeing how much a point is occluded by its sur
 To calculate ambient occlusion we sample points in a hemisphere around the current fragment point. This hemisphere should be aligned with the point’s normal. I used Poisson-disk samples to create the samples points.
 Since we have stored all the positions and normal this methods is very straight forward. Fist we take a look at the sample points around the current fragment’s position and calculate the distance between both. This allows us to limit the influence of points according to their distance to the point we are looking at. Then, we calculate the angle between the fragments normal and the normalized direction of the vector calculated in the previous step. This allows us to see if the sample point is in our hemisphere. Then, we simply multiply these to values to create our AO effect. 
 
-This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
-
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
 
 **Depth of field**
@@ -98,7 +99,7 @@ The effect of depth of field is created using a Gaussian Blur. First, I calculat
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/gaussian.PNG)
 
-![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/dof.PNG)
 
 **Bloom Effect**
 
@@ -116,6 +117,9 @@ PERFORMANCE EVALUATION
 
 For my performance analysis I calculated the FPS it takes for each feature to render. I got the results I was expecting. For the basic lighting features (diffuse and specular) and for the toon coloring and ambient occlusion there is no noticeable change in performance. These computations are simple and inexpensive. However, when we turn the bloom controller or the depth of field controller on, the performance decreases drastically. I believe this is due to the Gaussian Blur I used to sample points. During this computation, we sample over values in the x and y direction and then compute a power function, which is already expensive. The following graph shows the performance behavior.   
 
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/table.PNG)
+
+I tried using the WebGL inspector to do a more detailed performance analysis, but it gave me an error and it was rendering everything with a black texture. I would like to look into this in more depth. 
 
 -------------------------------------------------------------------------------
 RUNNING THE CODE:

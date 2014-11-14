@@ -47,12 +47,11 @@ var bloomSat = 5.0;
 var bloomIntensity = 5.0; 
 var colorSat = 3.0;
 var silhouetteThreshold = 10.0;
-var ambientIntensity = 3.0; 
+var ambientIntensity = 1.5; 
 var modelColor = vec3.create(); 
-modelColor = vec3.fromValues(0.4, 0.7, 0.6); 
+modelColor = vec3.fromValues(0.34, 0.7, 0.46); 
 
 var stats
-
 
 
 var main = function (canvasId, messageId) {
@@ -73,8 +72,8 @@ var main = function (canvasId, messageId) {
   // Set up shaders
   initShaders();
 
-  GUIBox();
 
+  GUIBox();
 
   // Register our render callbacks
   CIS565WEBGLCORE.render = render;
@@ -104,7 +103,7 @@ var controller = function () {
   this.wOffset = 2.0; 
   this.attenuation = 1.0; 
   this.silhouetteThreshold = 10.0;
-  this.ambientIntensity = 3.0; 
+  this.ambientIntensity = 1.5; 
   this.modelColor = [0.4, 0.7, 0.6];
   this.lightPosX = 70.0;
   this.lightPosY = 40.0; 
@@ -334,6 +333,7 @@ var drawModel = function (program, mask) {
   if (mask & 0x2) gl.disableVertexAttribArray(program.aVertexNormalLoc);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
@@ -359,7 +359,6 @@ var drawQuad = function (program) {
 var renderPass = function () {
   // Bind framebuffer object for gbuffer
   fbo.bind(gl, FBO_GBUFFER);
-
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
 
@@ -405,6 +404,7 @@ var renderMulti = function () {
 
   //gl.disable(gl.DEPTH_TEST);
   fbo.unbind(gl);
+
   gl.useProgram(null);
 
   fbo.bind(gl, FBO_GBUFFER_NORMAL);
@@ -546,10 +546,6 @@ var renderPost = function () {
   gl.bindTexture( gl.TEXTURE_2D, fbo.texture(0) );
   gl.uniform1i( postProg.uPosSamplerLoc, 0 );
 
-  gl.activeTexture( gl.TEXTURE1 );  //normal
-  gl.bindTexture( gl.TEXTURE_2D, fbo.texture(1) );
-  gl.uniform1i( postProg.uNormalSamplerLoc, 1 );
-
   gl.activeTexture( gl.TEXTURE2 );  //color
   gl.bindTexture( gl.TEXTURE_2D, fbo.texture(2) );
   gl.uniform1i( postProg.uColorSamplerLoc, 2 );
@@ -567,11 +563,7 @@ var renderPost = function () {
   gl.uniform1i(postProg.uGlowSamplerLoc, 5 );
 */
 
-  gl.uniformMatrix4fv( postProg.uModelViewLoc, false, camera.getViewTransform());
   gl.uniform3fv(postProg.uCameraPositionLoc, camera.getCameraPosition());
-
-  gl.uniform3fv(postProg.uLightColorLoc, lightColor); 
-  gl.uniform3fv(postProg.ulightPosLoc, lightPos); 
 
   gl.uniform1f( postProg.uZNearLoc, zNear );
   gl.uniform1f( postProg.uZFarLoc, zFar );
@@ -584,7 +576,6 @@ var renderPost = function () {
   gl.uniform1f( postProg.uBloomIntensityLoc, bloomIntensity );
   gl.uniform1f( postProg.uColorSatLoc, colorSat );
   gl.uniform1f( postProg.uDofLoc, dof);
-  gl.uniform1f( postProg.uSilhouetteThresholdLoc, silhouetteThreshold );
 
   drawQuad(postProg);
 
@@ -625,7 +616,7 @@ var initCamera = function () {
   interactor = CIS565WEBGLCORE.CameraInteractor(camera, canvas);
 
   // Add key-input controls
-  /*window.onkeydown = function (e) {
+  window.onkeydown = function (e) {
     interactor.onKeyDown(e);
     switch(e.keyCode) {
       case 48: //0
@@ -673,7 +664,7 @@ var initCamera = function () {
         texToDisplay = 10;
         break;
     }
-  }*/
+  }
 };
 
 var initObjs = function () {
@@ -685,7 +676,6 @@ var initObjs = function () {
   //objloader.loadFromFile(gl, "assets/models/teapot/teapot.obj", null);
   //objloader.loadFromFile(gl, "assets/models/crytek-sponza/sponza.obj", null);
  //objloader.loadFromFile(gl, "assets/models/budda.obj", null);
-
   // Add callback to upload the vertices once loaded
   objloader.addCallback(function () {
     model = new Model(gl, objloader);
@@ -833,7 +823,6 @@ var initShaders = function () {
     postProg.uShadeSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_shadeTex");
     //postProg.uGlowSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_glowTex");
     postProg.uPosSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_positionTex");
-    postProg.uNormalSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_normalTex");
     postProg.uColorSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_colorTex");
     postProg.uDepthSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_depthTex");
    
@@ -841,10 +830,7 @@ var initShaders = function () {
     postProg.uZFarLoc = gl.getUniformLocation( postProg.ref(), "u_zFar" );
     postProg.uDisplayTypeLoc = gl.getUniformLocation( postProg.ref(), "u_displayType" );
 
-    postProg.uModelViewLoc = gl.getUniformLocation( postProg.ref(), "u_modelview" );
     postProg.uCameraPositionLoc = gl.getUniformLocation( postProg.ref(), "u_cameraPosition");
-    postProg.uLightColorLoc = gl.getUniformLocation( postProg.ref(), "u_lightColor"); 
-    postProg.ulightPosLoc = gl.getUniformLocation( postProg.ref(), "u_lightPos"); 
 
     postProg.uScreenWidthLoc = gl.getUniformLocation( postProg.ref(), "u_screenWidth"); 
     postProg.uScreenHeightLoc = gl.getUniformLocation( postProg.ref(), "u_screenHeight"); 
@@ -863,6 +849,6 @@ var initFramebuffer = function () {
     console.log("FBO Initialization failed");
     return;
   }
-
 };
  
+

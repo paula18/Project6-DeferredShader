@@ -6,10 +6,7 @@ precision highp float;
 #define DISPLAY_DOF 10
 #define DISPLAY_AMBIENT 9
 #define DISPLAY_EDGE 11
-
-#define ambientRadius 0.01
-#define samples 6.0
-
+#define DISPLAY_TOON 8
 
 uniform sampler2D u_positionTex;
 uniform sampler2D u_normalTex;
@@ -60,10 +57,10 @@ vec2 poisson16 = (vec2( -0.94201624,  -0.39906216 ),
                      );
 
 float linearizeDepth( float exp_depth, float near, float far ){
-	return ( 2.0 * near ) / ( far + near - exp_depth * ( far - near ) );
+  return ( 2.0 * near ) / ( far + near - exp_depth * ( far - near ) );
 }
 
-float doAmbientOcclusion(vec3 position, vec3 normal, float ambientIntensity, float depth){
+float doAmbientOcclusion(vec3 position, vec3 normal, float depth){
   float ambientColor; 
   
   vec2 radius = vec2 (0.001, 0.001); 
@@ -74,7 +71,7 @@ float doAmbientOcclusion(vec3 position, vec3 normal, float ambientIntensity, flo
   
   for (int i = 0; i < count; ++i)
   {
-  	//Samples points with poisson-disk samples and calculate sample positions. 
+    //Samples points with poisson-disk samples and calculate sample positions. 
     vec3 samplePos =  texture2D(u_positionTex, v_texcoord + (radius) * poisson16[i]).xyz;
 
     //Distance between fragments sample point and current frament position
@@ -87,12 +84,12 @@ float doAmbientOcclusion(vec3 position, vec3 normal, float ambientIntensity, flo
     float alpha = max(dot(normal, sampleDir), 0.0);
 
     float dist = distance(samplePos, position);
- 	
- 	//Do blending between 1, 0 to limit inflence of points that are far away. 
+  
+  //Do blending between 1, 0 to limit inflence of points that are far away. 
     float a = 1.0 - smoothstep(distThreshold, distThreshold * 2.0, dist);
     float b = alpha;
  
-     ao += (a * alpha * ambientIntensity);
+     ao += (a * alpha * u_ambientIntensity);
     
     }
   
@@ -150,9 +147,9 @@ vec3 doDiffuse(float kdiff, vec3 lightDir, vec3 normal, vec3 color){
 vec3 doSpecular(float kspec, float n, vec3 lightDir, vec3 viewVector, vec3 normal, vec3 color){
    vec3 specularColor; 
    
-	 vec3 ref = normalize(reflect(lightDir, normal));
- 	 float dotSpec = clamp(dot(ref, viewVector), 0.0, 1.0);
-	 float specular = pow(dotSpec, n); 				
+   vec3 ref = normalize(reflect(lightDir, normal));
+   float dotSpec = clamp(dot(ref, viewVector), 0.0, 1.0);
+   float specular = pow(dotSpec, n);        
    specularColor = kspec * u_lightColor * color * specular; 
    
    return specularColor;   
@@ -182,8 +179,8 @@ vec2 doToonColor (vec3 position, vec3 normal, vec3 color){
      
      
   /* vec3 ref = normalize(reflect(lightDir, normal));
- 	 float dotSpec = clamp(dot(ref, viewVector), 0.0, 1.0);
-	 float specular = pow(dotSpec, 2.0); 	
+   float dotSpec = clamp(dot(ref, viewVector), 0.0, 1.0);
+   float specular = pow(dotSpec, 2.0);  
   
    if (specular < 0.3)
      specular = 0.3; 
@@ -205,52 +202,46 @@ void main()
    vec3 color = texture2D(u_colorTex, v_texcoord).rgb; 
    vec3 normal = normalize(texture2D(u_normalTex, v_texcoord).rgb);
    vec3 position = texture2D(u_positionTex, v_texcoord).rgb;
-   float depth = texture2D( u_depthTex, v_texcoord ).x;
+
    
    vec3 lightPos = (u_modelview*vec4(u_lightPos, 1.0)).xyz; 
    vec3 lightDir = normalize(lightPos - position); 
    vec3 viewVector = normalize(position - u_cameraPosition); 
    
-	 // depth = linearizeDepth( depth, u_zNear, u_zFar );
-
-   //ADD GUI
    float kdiff = 0.8;
-
    float kspec = 1.0; 
    float n = 2.0; 
    
-   vec3 diffuseColor = doDiffuse(kdiff, lightDir, normal, color);
-	 vec3 specularColor = doSpecular(kspec, n, lightDir, viewVector, normal, color);		
-	
+  vec3 diffuseColor = doDiffuse(kdiff, lightDir, normal, color);
+   vec3 specularColor = doSpecular(kspec, n, lightDir, viewVector, normal, color);
+  vec3 finalColor = u_ambientColor + diffuseColor + specularColor;
   
-   vec3 finalColor = u_ambientColor + diffuseColor + specularColor;
-   vec2 diffSpec = doToonColor(position, normal, color); 
-   vec3 toonColor = u_ambientColor + kdiff * u_lightColor * color * diffSpec.x +
-      kspec * u_lightColor * color * diffSpec.y;
-   
-   float silhouette = doSilhouette();
 
-   float ambientColor =  doAmbientOcclusion(position, normal, u_ambientIntensity, depth); 
+    
   
-    if( u_displayType == DISPLAY_DIFF )
-         gl_FragColor = vec4(diffuseColor, 1.0);
-   else if (u_displayType == 8){
-    if(silhouette > length(position) * u_silhouetteThreshold)
-       toonColor *= vec3(0.0);
-     gl_FragColor = vec4(toonColor, 1.0); 
+   if( u_displayType == DISPLAY_DIFF )
+      finalColor = diffuseColor;
+   else if (u_displayType == DISPLAY_TOON){
+      vec2 diffSpec = doToonColor(position, normal, color); 
+      vec3  toonColor = u_ambientColor + kdiff * u_lightColor * color * diffSpec.x +
+      kspec * u_lightColor * color * diffSpec.y;
+      if(doSilhouette() > length(position) * u_silhouetteThreshold)
+         toonColor *= vec3(0.0);
+      finalColor = toonColor; 
    }
    else if (u_displayType == 11){
-    if(silhouette > length(position) * u_silhouetteThreshold)
-       finalColor *= vec3(0.0);
-     gl_FragColor = vec4(finalColor, 1.0); 
+    if(doSilhouette() > length(position) * u_silhouetteThreshold)
+       finalColor *= vec3(0.0); 
    }
-     else if( u_displayType == DISPLAY_SPECULAR )
-        gl_FragColor = vec4(specularColor, 1.0);
-     else if (u_displayType == DISPLAY_AMBIENT){
-       gl_FragColor = vec4(vec3(ambientColor), 1.0); 
-     }
-     else 
-         gl_FragColor = vec4(finalColor, 1.0);
+   else if( u_displayType == DISPLAY_SPECULAR )
+        finalColor = specularColor;   
+   else if (u_displayType == DISPLAY_AMBIENT){
+      float depth = texture2D( u_depthTex, v_texcoord ).x;
+      float ambientColor =  doAmbientOcclusion(position, normal, depth);
+      finalColor = vec3(ambientColor); 
+   }
+
+   gl_FragColor = vec4(finalColor, 1.0);
         
 
    

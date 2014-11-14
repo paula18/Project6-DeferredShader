@@ -54,6 +54,7 @@ modelColor = vec3.fromValues(0.4, 0.7, 0.6);
 var stats
 
 
+
 var main = function (canvasId, messageId) {
   var canvas;
 
@@ -73,6 +74,7 @@ var main = function (canvasId, messageId) {
   initShaders();
 
   GUIBox();
+
 
   // Register our render callbacks
   CIS565WEBGLCORE.render = render;
@@ -861,4 +863,6 @@ var initFramebuffer = function () {
     console.log("FBO Initialization failed");
     return;
   }
+
 };
+ 

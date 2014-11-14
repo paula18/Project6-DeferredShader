@@ -3,11 +3,16 @@ CIS565: Project 6 -- Deferred Shader
 -------------------------------------------------------------------------------
 Bunny Glow Effect: 
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/bunnyGlow.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bunnyGlow.PNG)
 
 Sponza Toon Effect: 
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/sponzaToon.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/sponzaToon.PNG)
+
+-------------------------------------------------------------------------------
+VIDEO AND DEMO:
+-------------------------------------------------------------------------------
+Video: https://vimeo.com/111820765
 -------------------------------------------------------------------------------
 OVERVIEW:
 -------------------------------------------------------------------------------
@@ -24,25 +29,25 @@ As I mentioned before, the geometry pass processes all of the objects in the sce
 
 Position
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/position.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/position.PNG)
 
 Normal
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/normal.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShaderL/blob/master/resources/normal.PNG)
 
 Color
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/color.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/color.PNG)
 
 Depth
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/depth.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/depth.PNG)
 
 
 
 The light accumulation pass reads the properties of the G-Buffer pixel by pixel, and does the lighting calculations the same way we did in forward shading. To create the final image, we render a screen space quad. 
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/deferredShading.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/deferredShading.PNG)
 
 -------------------------------------------------------------------------------
 FEATURES:
@@ -53,13 +58,13 @@ FEATURES:
 These lighting calculation were done following the same equations as for forward rendering (see Project5). We read the positions, normal and color from the required textures and we calculate the light contribution. 
 
 Diffuse Lighting: 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/diffuseColoring.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/diffuseColoring.PNG)
 
 Specular Lighting:
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/specular.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/specular.PNG)
 
 Final Color: 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/allLighting.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/allLighting.PNG)
 
 **Toon Shading**
 
@@ -70,11 +75,11 @@ Another important feature of toon shading is the silhouette around an object. To
 
 This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/toonColoring.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/toonColoring.PNG)
 
 This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/bunnyToon.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bunnyToon.PNG)
 
 
 **Screen Space ambient Occlusion**
@@ -85,21 +90,21 @@ Since we have stored all the positions and normal this methods is very straight 
 
 This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/ao.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
 
 **Depth of field**
 
 The effect of depth of field is created using a Gaussian Blur. First, I calculate the distance between the fragment’s depth and a user defined focal length. I then used the length of this distance as the sigma value of the Gaussian equation.
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/gaussian.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/gaussian.PNG)
 
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/ao.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
 
 **Bloom Effect**
 
 I don’t think my bloom effect is very accurate, but it works. The way I created this feature is by first blurring the image the same way I did for DOF. Then, I interpolated the resulting color and a specific color with a user defined value. Finally I multiplied this result by a user defined intensity and clamp the result between 0.0 and 1.0. To be honest, I don’t know if this is the right way to do it. I ended up playing with values and formulas to see what looked better to me. 
  
-![alt tag](https://github.com/paula18/Project5-WebGL/blob/master/resources/bloom.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bloom.PNG)
 
 **User Interface**
 

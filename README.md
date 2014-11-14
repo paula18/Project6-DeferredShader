@@ -13,6 +13,8 @@ Sponza Toon Effect:
 VIDEO AND DEMO:
 -------------------------------------------------------------------------------
 Video: https://vimeo.com/111820765
+
+Demo: http://paula18.github.io/Project6-DeferredShader/
 -------------------------------------------------------------------------------
 OVERVIEW:
 -------------------------------------------------------------------------------
@@ -77,6 +79,8 @@ This first image shows the first way I implemented this feature, which was wrong
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/toonColoring.PNG)
 
+This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
+
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bunnyToon.PNG)
 
 
@@ -96,7 +100,7 @@ The effect of depth of field is created using a Gaussian Blur. First, I calculat
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/gaussian.PNG)
 
-![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/dof.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
 
 **Bloom Effect**
 
@@ -114,6 +118,9 @@ PERFORMANCE EVALUATION
 
 For my performance analysis I calculated the FPS it takes for each feature to render. I got the results I was expecting. For the basic lighting features (diffuse and specular) and for the toon coloring and ambient occlusion there is no noticeable change in performance. These computations are simple and inexpensive. However, when we turn the bloom controller or the depth of field controller on, the performance decreases drastically. I believe this is due to the Gaussian Blur I used to sample points. During this computation, we sample over values in the x and y direction and then compute a power function, which is already expensive. The following graph shows the performance behavior.   
 
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/table.PNG)
+
+I tried using the WebGL inspector to do a more detailed performance analysis, but it gave me an error and it was rendering everything with a black texture. I would like to look into this in more depth. 
 
 -------------------------------------------------------------------------------
 RUNNING THE CODE:

@@ -219,6 +219,7 @@ var Model = function (gl, objLoader) {
   var vbo = [];
   var ibo = [];
   var nbo = [];
+  var tbo = []; 
   var iboLength = [];
 
   for (var i = 0; i < numGroups; i++) {
@@ -226,6 +227,7 @@ var Model = function (gl, objLoader) {
     vbo[i] = gl.createBuffer();
     ibo[i] = gl.createBuffer();
     nbo[i] = gl.createBuffer();
+    tbo[i] = gl.createBuffer(); 
 
     // Add vbo, ibo, nbo and tbo
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
@@ -237,6 +239,8 @@ var Model = function (gl, objLoader) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo[i]);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(objLoader.indices(i)), gl.STATIC_DRAW);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, tbo[i]); 
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(objLoader.texcoords(i)), gl.STATIC_DRAW); 
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
@@ -253,6 +257,9 @@ var Model = function (gl, objLoader) {
     nbo: function(i) {
       return nbo[i];
     }, 
+    tbo: function(i){
+        return tbo[i]; 
+    },
     numGroups: function() {
       return numGroups;
     },

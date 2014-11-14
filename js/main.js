@@ -72,6 +72,7 @@ var main = function (canvasId, messageId) {
   // Set up shaders
   initShaders();
 
+
   GUIBox();
 
   // Register our render callbacks
@@ -332,6 +333,7 @@ var drawModel = function (program, mask) {
   if (mask & 0x2) gl.disableVertexAttribArray(program.aVertexNormalLoc);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
@@ -357,7 +359,6 @@ var drawQuad = function (program) {
 var renderPass = function () {
   // Bind framebuffer object for gbuffer
   fbo.bind(gl, FBO_GBUFFER);
-
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
 
@@ -403,6 +404,7 @@ var renderMulti = function () {
 
   //gl.disable(gl.DEPTH_TEST);
   fbo.unbind(gl);
+
   gl.useProgram(null);
 
   fbo.bind(gl, FBO_GBUFFER_NORMAL);
@@ -683,7 +685,6 @@ var initObjs = function () {
   //objloader.loadFromFile(gl, "assets/models/teapot/teapot.obj", null);
   //objloader.loadFromFile(gl, "assets/models/crytek-sponza/sponza.obj", null);
  //objloader.loadFromFile(gl, "assets/models/budda.obj", null);
-
   // Add callback to upload the vertices once loaded
   objloader.addCallback(function () {
     model = new Model(gl, objloader);
@@ -862,3 +863,5 @@ var initFramebuffer = function () {
     return;
   }
 };
+ 
+

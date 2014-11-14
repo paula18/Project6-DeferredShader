@@ -546,10 +546,6 @@ var renderPost = function () {
   gl.bindTexture( gl.TEXTURE_2D, fbo.texture(0) );
   gl.uniform1i( postProg.uPosSamplerLoc, 0 );
 
-  gl.activeTexture( gl.TEXTURE1 );  //normal
-  gl.bindTexture( gl.TEXTURE_2D, fbo.texture(1) );
-  gl.uniform1i( postProg.uNormalSamplerLoc, 1 );
-
   gl.activeTexture( gl.TEXTURE2 );  //color
   gl.bindTexture( gl.TEXTURE_2D, fbo.texture(2) );
   gl.uniform1i( postProg.uColorSamplerLoc, 2 );
@@ -567,11 +563,7 @@ var renderPost = function () {
   gl.uniform1i(postProg.uGlowSamplerLoc, 5 );
 */
 
-  gl.uniformMatrix4fv( postProg.uModelViewLoc, false, camera.getViewTransform());
   gl.uniform3fv(postProg.uCameraPositionLoc, camera.getCameraPosition());
-
-  gl.uniform3fv(postProg.uLightColorLoc, lightColor); 
-  gl.uniform3fv(postProg.ulightPosLoc, lightPos); 
 
   gl.uniform1f( postProg.uZNearLoc, zNear );
   gl.uniform1f( postProg.uZFarLoc, zFar );
@@ -584,7 +576,6 @@ var renderPost = function () {
   gl.uniform1f( postProg.uBloomIntensityLoc, bloomIntensity );
   gl.uniform1f( postProg.uColorSatLoc, colorSat );
   gl.uniform1f( postProg.uDofLoc, dof);
-  gl.uniform1f( postProg.uSilhouetteThresholdLoc, silhouetteThreshold );
 
   drawQuad(postProg);
 
@@ -832,7 +823,6 @@ var initShaders = function () {
     postProg.uShadeSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_shadeTex");
     //postProg.uGlowSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_glowTex");
     postProg.uPosSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_positionTex");
-    postProg.uNormalSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_normalTex");
     postProg.uColorSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_colorTex");
     postProg.uDepthSamplerLoc = gl.getUniformLocation( postProg.ref(), "u_depthTex");
    
@@ -840,10 +830,7 @@ var initShaders = function () {
     postProg.uZFarLoc = gl.getUniformLocation( postProg.ref(), "u_zFar" );
     postProg.uDisplayTypeLoc = gl.getUniformLocation( postProg.ref(), "u_displayType" );
 
-    postProg.uModelViewLoc = gl.getUniformLocation( postProg.ref(), "u_modelview" );
     postProg.uCameraPositionLoc = gl.getUniformLocation( postProg.ref(), "u_cameraPosition");
-    postProg.uLightColorLoc = gl.getUniformLocation( postProg.ref(), "u_lightColor"); 
-    postProg.ulightPosLoc = gl.getUniformLocation( postProg.ref(), "u_lightPos"); 
 
     postProg.uScreenWidthLoc = gl.getUniformLocation( postProg.ref(), "u_screenWidth"); 
     postProg.uScreenHeightLoc = gl.getUniformLocation( postProg.ref(), "u_screenHeight"); 

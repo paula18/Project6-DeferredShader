@@ -1,6 +1,5 @@
 precision highp float;
 
-#define DISPLAY_TOON 8
 #define DISPLAY_BLOOM 7
 #define DISPLAY_DOF 10
 
@@ -38,7 +37,7 @@ float heightFactor = 1.0/u_screenHeigth;
 float widthFactor = 1.0/u_screenWidth;
 
 float linearizeDepth( float exp_depth, float near, float far ){
-	return ( 2.0 * near ) / ( far + near - exp_depth * ( far - near ) );
+  return ( 2.0 * near ) / ( far + near - exp_depth * ( far - near ) );
 }
 
 vec3 gaussianBlur(float sigma, sampler2D texture){
@@ -113,7 +112,7 @@ void main()
   float depth = texture2D( u_depthTex, v_texcoord ).x;
   vec3 viewVector = normalize(position - u_cameraPosition); 
    
-	 depth = linearizeDepth( depth, u_zNear, u_zFar );
+   depth = linearizeDepth( depth, u_zNear, u_zFar );
  
 
   
@@ -124,16 +123,12 @@ void main()
   vec3 dofColor = doDOF(u_dof, viewVector, depth);
 
   
-   if (u_displayType == DISPLAY_DOF)
-       gl_FragColor = vec4(dofColor, 1.0);
-        
-
-  else if (u_displayType == DISPLAY_BLOOM)
-     {
-		gl_FragColor = vec4(bloomColor, 1.0); 
-   }
-  else
-     gl_FragColor = vec4(shade, 1.0);
+   //if (u_displayType == DISPLAY_DOF)
+     //shade = dofColor;
+   //else if (u_displayType == DISPLAY_BLOOM)
+      //shade = bloomColor; 
+  
+    gl_FragColor = vec4(shade, 1.0);
   
 
 }

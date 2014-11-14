@@ -47,9 +47,9 @@ var bloomSat = 5.0;
 var bloomIntensity = 5.0; 
 var colorSat = 3.0;
 var silhouetteThreshold = 10.0;
-var ambientIntensity = 3.0; 
+var ambientIntensity = 1.5; 
 var modelColor = vec3.create(); 
-modelColor = vec3.fromValues(0.4, 0.7, 0.6); 
+modelColor = vec3.fromValues(0.34, 0.7, 0.46); 
 
 var stats
 
@@ -103,7 +103,7 @@ var controller = function () {
   this.wOffset = 2.0; 
   this.attenuation = 1.0; 
   this.silhouetteThreshold = 10.0;
-  this.ambientIntensity = 3.0; 
+  this.ambientIntensity = 1.5; 
   this.modelColor = [0.4, 0.7, 0.6];
   this.lightPosX = 70.0;
   this.lightPosY = 40.0; 

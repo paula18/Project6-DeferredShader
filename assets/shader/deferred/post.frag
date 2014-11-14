@@ -1,6 +1,5 @@
 precision highp float;
 
-#define DISPLAY_TOON 8
 #define DISPLAY_BLOOM 7
 #define DISPLAY_DOF 10
 
@@ -54,12 +53,12 @@ vec3 gaussianBlur(float sigma, sampler2D texture){
   return returnColor;  
 }
 
-vec3 doDOF(float focal, vec3 viewVector, float linearDepth){
+vec3 doDOF(vec3 viewVector, float linearDepth){
    
    vec3 dofColor; 
  
   //Distance between current depth and focal distnce
-  float distance = linearDepth - focal;
+  float distance = linearDepth - u_dof;
 
   dofColor = gaussianBlur(5.0*abs(distance), u_shadeTex);
    
@@ -77,15 +76,14 @@ vec3 adjustSaturation(vec3 color, float saturation){
 
  }
 
-vec3 doBloom(float bloomSat, float bloomIntensity, float colorSat, 
-             vec3 color, float linearDepth, float focal){
+vec3 doBloom(vec3 color, float linearDepth){
   
   vec3 bloomColor;
-  float distance = linearDepth - focal;
+  float distance = linearDepth - u_dof;
  
   bloomColor = gaussianBlur(5.0*abs(distance), u_shadeTex);
-  bloomColor = adjustSaturation(bloomColor, bloomSat) * bloomIntensity; 
-  color = adjustSaturation(color, colorSat); 
+  bloomColor = adjustSaturation(bloomColor, u_bloomSat) * u_bloomIntensity; 
+  color = adjustSaturation(color, u_colorSat); 
   color *= (1.0 - clamp(bloomColor, 0.0, 1.0)); 
   
   bloomColor += color; 
@@ -106,7 +104,7 @@ void main()
     depth = linearizeDepth( depth, u_zNear, u_zFar );
     vec3 position = texture2D(u_positionTex, v_texcoord).xyz;
     vec3 viewVector = normalize(position - u_cameraPosition); 
-    shade = doDOF(u_dof, viewVector, depth);
+    shade = doDOF(viewVector, depth);
   }
         
 
@@ -114,7 +112,7 @@ void main()
      float depth = texture2D( u_depthTex, v_texcoord ).x;
      depth = linearizeDepth( depth, u_zNear, u_zFar );
      vec3 color = texture2D(u_colorTex, v_texcoord).rgb;
-     shade = doBloom(u_bloomSat, u_bloomIntensity, u_colorSat, color, depth, u_dof);
+     shade = doBloom(color, depth);
   }
 
   gl_FragColor = vec4(shade, 1.0);

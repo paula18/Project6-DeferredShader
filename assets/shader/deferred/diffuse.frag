@@ -6,6 +6,7 @@ precision highp float;
 #define DISPLAY_DOF 10
 #define DISPLAY_AMBIENT 9
 #define DISPLAY_EDGE 11
+#define DISPLAY_TOON 8
 
 uniform sampler2D u_positionTex;
 uniform sampler2D u_normalTex;
@@ -59,7 +60,7 @@ float linearizeDepth( float exp_depth, float near, float far ){
   return ( 2.0 * near ) / ( far + near - exp_depth * ( far - near ) );
 }
 
-float doAmbientOcclusion(vec3 position, vec3 normal, float ambientIntensity, float depth){
+float doAmbientOcclusion(vec3 position, vec3 normal, float depth){
   float ambientColor; 
   
   vec2 radius = vec2 (0.001, 0.001); 
@@ -88,7 +89,7 @@ float doAmbientOcclusion(vec3 position, vec3 normal, float ambientIntensity, flo
     float a = 1.0 - smoothstep(distThreshold, distThreshold * 2.0, dist);
     float b = alpha;
  
-     ao += (a * alpha * ambientIntensity);
+     ao += (a * alpha * u_ambientIntensity);
     
     }
   
@@ -220,13 +221,12 @@ void main()
   
    if( u_displayType == DISPLAY_DIFF )
       finalColor = diffuseColor;
-   else if (u_displayType == 8){
-      vec3 toonColor;
+   else if (u_displayType == DISPLAY_TOON){
+      vec2 diffSpec = doToonColor(position, normal, color); 
+      vec3  toonColor = u_ambientColor + kdiff * u_lightColor * color * diffSpec.x +
+      kspec * u_lightColor * color * diffSpec.y;
       if(doSilhouette() > length(position) * u_silhouetteThreshold)
          toonColor *= vec3(0.0);
-      vec2 diffSpec = doToonColor(position, normal, color); 
-      toonColor = u_ambientColor + kdiff * u_lightColor * color * diffSpec.x +
-      kspec * u_lightColor * color * diffSpec.y;
       finalColor = toonColor; 
    }
    else if (u_displayType == 11){
@@ -237,7 +237,7 @@ void main()
         finalColor = specularColor;   
    else if (u_displayType == DISPLAY_AMBIENT){
       float depth = texture2D( u_depthTex, v_texcoord ).x;
-      float ambientColor =  doAmbientOcclusion(position, normal, u_ambientIntensity, depth);
+      float ambientColor =  doAmbientOcclusion(position, normal, depth);
       finalColor = vec3(ambientColor); 
    }
 

@@ -77,8 +77,6 @@ This first image shows the first way I implemented this feature, which was wrong
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/toonColoring.PNG)
 
-This first image shows the first way I implemented this feature, which was wrong. I was using the texture for the color instead of the texture that has the positions stored. However, I believed I looks good anyways.
-
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/bunnyToon.PNG)
 
 
@@ -98,7 +96,7 @@ The effect of depth of field is created using a Gaussian Blur. First, I calculat
 
 ![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/gaussian.PNG)
 
-![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/ao.PNG)
+![alt tag](https://github.com/paula18/Project6-DeferredShader/blob/master/resources/dof.PNG)
 
 **Bloom Effect**
 

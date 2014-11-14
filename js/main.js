@@ -80,7 +80,8 @@ var main = function (canvasId, messageId) {
   CIS565WEBGLCORE.renderLoop = renderLoop;
 
   stats = new Stats();
-  stats.setMode(0); // 0: fps, 1: ms
+ // stats.setMode(0);
+  stats.setMode(1); // 0: fps, 1: ms
 
 // align top-left
   stats.domElement.style.position = 'absolute';
